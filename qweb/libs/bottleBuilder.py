@@ -21,7 +21,7 @@ class BottleBuilder:
 
     def build(self):
         cb = self.callback
-        if self.auth_provider is not   None:
+        if self.auth_provider is not None:
             if self.permissions is not None:
                 permissionDecorator = AuthProvider.permission(self.auth_provider.checkPermission, self.permissions)
                 cb = permissionDecorator(cb)

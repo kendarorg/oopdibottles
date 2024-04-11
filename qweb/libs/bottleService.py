@@ -9,23 +9,24 @@ from qweb.libs.decorators import find_decorators
 
 @component
 class BottleService:
-    def __init__(self, controllers: list[Controller],authProvider:AuthProvider):
+    def __init__(self, controllers: list[Controller], authProvider: AuthProvider):
         self.controllers = controllers
         for controller in self.controllers:
             controller.mapRoutes(self)
             t = type(controller)
             decorators = find_decorators(t)
-            for key,value in decorators.items():
-                instance_method = getattr(controller,value["name"])
+            for key, value in decorators.items():
+                instance_method = getattr(controller, value["name"])
                 decorators = value["decorators"]
                 route = [p for p in decorators if p["type"] == "qroute"]
                 auth = [p for p in decorators if p["type"] == "qauth"]
-                if len(route)==1:
+                if len(route) == 1:
                     route = route[0]
-                    if len(auth)==1:
+                    if len(auth) == 1:
                         auth = auth[0]
-                        if auth["permissions"] is not None and len(auth["permissions"])>0:
-                            permissionDecorator = AuthProvider.permission(authProvider.checkPermission,auth["permissions"])
+                        if auth["permissions"] is not None and len(auth["permissions"]) > 0:
+                            permissionDecorator = AuthProvider.permission(authProvider.checkPermission,
+                                                                          auth["permissions"])
                             instance_method = permissionDecorator(instance_method)
                         authDecorator = AuthProvider.auth_basic(authProvider.checkAuth)
                         instance_method = authDecorator(instance_method)
